@@ -26,7 +26,15 @@ cors = CORS(app)
 ## crawler type object
 CR = CRAWLER()
 ## compass type object
+
+
 CP = COMPASS(config.I2C_adresse)
+    
+##try:
+##    CP = COMPASS(config.I2C_adresse)
+##except Exception as e:
+##    print("Couldn't initialize compass, exception", e)
+##    exit()
 
 ## motor type objet (motor right)
 MR = MOTOR(config.motor_right_IO2,config.motor_right_DIR,0)
@@ -476,10 +484,11 @@ def deconnection():
 
 if __name__=="__main__":
     #MODIFICAT 25/01/2020
-    app.run(host='147.83.159.165', port=5001, debug=True)
+   # app.run(host='147.83.159.165', port=5001, debug=True)
 	#app.run(host='147.83.159.159', port=5001, debug=True) 11:49 05/02/2021
     #MODIFICAT 23/10/2020 12:19
     #app.run(host='147.83.159.170', port=5001, debug=True)
 	#app.run(host='147.83.159.154', port=5001, debug=True)
     #app.run(host='192.168.2.117', port=5001, debug=True)
     #app.run(host='127.0.0.1', port=5001, debug=True)
+    app.run(host='192.168.1.4', port=5001, debug=True)
