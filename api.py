@@ -29,12 +29,6 @@ CR = CRAWLER()
 
 
 CP = COMPASS(config.I2C_adresse)
-    
-##try:
-##    CP = COMPASS(config.I2C_adresse)
-##except Exception as e:
-##    print("Couldn't initialize compass, exception", e)
-##    exit()
 
 ## motor type objet (motor right)
 MR = MOTOR(config.motor_right_IO2,config.motor_right_DIR,0)
@@ -57,6 +51,41 @@ total_turn = 0
 def date():
 	now = datetime.datetime.now()
 	return (now.strftime("%Y/%m/%d /%H/%M/%S"))
+
+## Use lights on off in Crawler class
+def lights():
+    global orderreceiv
+    
+    print("I get flashed by the paparazzi ")
+    
+    if 'time' in request.args and'lights' in request.args and 'order' in request.args and 'nborder' in request.args:
+        
+        print("there is lights in request.args")
+        
+        ordersend = request.args['order']
+        nborder = request.args['nborder']
+        time = request.args['time']
+        lights = request.args['lights']
+        
+        if str(lights)=="on":
+            print("With all the lights on")
+            lights= CR.light_on_off(1)
+            
+        elif str(lights)=="off":
+            print("So turn the lights out ")
+            lights= CR.light_on_off(0)
+        else:
+            return "error lights"
+        
+        orderreceiv = str(date())+"Crawler received :/order:"+str(nborder)+"/Time:"+str(time)+"/lights:"+str(lights)
+        ordersend = str(date())+"Crawler executed :/order:"+str(nborder)+" END"
+        return ordersend
+    else:
+        print("My eyes are still burning red , So turn the lights out")
+        lights="no lights avaible"
+        
+    return lights
+    
 
 
 
@@ -93,6 +122,10 @@ def manual_deplacement():
 		# MODIFICAT str() 06-11-2020 14.34
         trun_degree =CP.bearing3599()
         compteur = 0
+        
+        # Enable use of PWM
+        CR.PWM(int(1))
+        
         if str(direction) == "forward":
             CR.forward(int(speed))
         elif str(direction) == "backward":
@@ -161,8 +194,10 @@ def automatic_deplacement():
         nborder = request.args['nborder']
         nborder2 = request.args['nborderend']
         nb_element = int(request.args['number'])
-
         
+        # Enable use of PWM
+        CR.PWM(int(1))
+
         #write in the file that the request has been received
         orderreceiv = str(date())+"Crawler send :/order:"+str(nborder)+" " +str(nborder2)
 
@@ -180,18 +215,19 @@ def automatic_deplacement():
             speed1= request.args['speed1'+str(i)]
             speed2 = request.args['speed2'+str(i)]
             
+            
             if int(speed1) < 0:
                 MR.DIR(config.motor_right_DIR,0)
-                MR.duty_cycle(int(speed1), config.motor_right_PWM )
+                MR.duty_cycle(int(speed1),0 )
             else :
                 MR.DIR(config.motor_right_DIR,1)
-                MR.duty_cycle(int(speed1),config.motor_right_PWM)
+                MR.duty_cycle(int(speed1),0)
             if int(speed2) < 0:
                 ML.DIR(config.motor_left_DIR,0)
-                ML.duty_cycle(int(speed2),config.motor_left_PWM)
+                ML.duty_cycle(int(speed2),1)
             else :
                 ML.DIR(config.motor_left_DIR,1)
-                ML.duty_cycle(int(speed2),config.motor_left_PWM)  
+                ML.duty_cycle(int(speed2),1)  
             value=compteur_test
             trun_degree =CP.bearing3599()
             compteur =0
@@ -231,6 +267,7 @@ def automatic_deplacement():
 #  @return: if correct request return ,at the end of the order, "date+"Crawler send :/order:"+order number+" END""", if error at reception returns "date+"Crawler send :/order:"+sorder number+" error in request""
 #  @type: string
 def advanced_deplacement():
+    print("Hi! I'm advanced deplacement, I'm currently working!")
     #global variable
     global compteur_test
     global test_recaption
@@ -245,21 +282,23 @@ def advanced_deplacement():
         time = request.args['time']
         speed1 = request.args['speed1']
         speed2 = request.args['speed2']
+        
+        # Enable use of PWM
+        CR.PWM(int(1))
 
-
-        #traiteement de la direction
+        #traitement de la direction
         if int(speed1) < 0:
             MR.DIR(config.motor_right_DIR,0)
-            MR.duty_cycle(int(speed1), config.motor_right_PWM )
+            MR.duty_cycle(int(speed1),0)
         else :
             MR.DIR(config.motor_right_DIR,1)
-            MR.duty_cycle(int(speed1),config.motor_right_PWM)
+            MR.duty_cycle(int(speed1),0)
         if int(speed2) < 0:
             ML.DIR(config.motor_left_DIR,0)
-            ML.duty_cycle(int(speed2),config.motor_left_PWM)
+            ML.duty_cycle(int(speed2),1)
         else :
             ML.DIR(config.motor_left_DIR,1)
-            ML.duty_cycle(int(speed2),config.motor_left_PWM) 
+            ML.duty_cycle(int(speed2),1) 
 
         #write in the file that the request has been received
         orderreceiv = str(date())+"Crawler send :/order:"+str(nborder)+"/Time:"+str(time)+"/Motor right:"+str(speed1)+"/Motor left:"+str(speed2)
@@ -321,6 +360,10 @@ def turn():
         ordersend = request.args['order']
         nborder = request.args['nborder']
         direction = request.args['compassvalue']
+        print("DIR TURN FUNC",direction)
+        
+        # Enable use of PWM
+        CR.PWM(int(1))
 
         #write in the file that the request has been received
         orderreceiv = str(date())+" Crawler send/order:"+str(nborder)+"/rotation:"+direction
@@ -368,6 +411,7 @@ def stopfunction() :
     global orderreceiv
     orderreceiv = "STOP"
     test_recaption = True
+    # Disable use of PWM
     CR.forward(0)
     compteur_test=0
     test_recaption = False
@@ -419,6 +463,13 @@ def read_compass():
     compass = CP.bearing3599()
     return str(compass)
 
+@app.route("/api/lights")
+## if request send to /api/lights, execute light_on_off(on_off) from CRAWLER class and send in response to the request the value return by light_on_off(on_off)
+def flashing_lights():
+    print("Hey, I m flashing lights method")
+    return lights()
+    
+
 
 @app.route("/api/manual/deplacement")
 ## if request send to /api/manual/deplacment, execute manual_deplacment() and send in response to the request the value return by manual_deplacment()
@@ -442,6 +493,7 @@ def run_automatic():
 #  @return: value return by advanced_deplacement()
 #  @type: string
 def run_advanced():
+    print("A jumped-up pantry boy Who never knew his place He said, <<Return the ring>> He knows so much about these things He knows so much about these things")
     return advanced_deplacement()
 
 
@@ -491,4 +543,6 @@ if __name__=="__main__":
 	#app.run(host='147.83.159.154', port=5001, debug=True)
     #app.run(host='192.168.2.117', port=5001, debug=True)
     #app.run(host='127.0.0.1', port=5001, debug=True)
-    app.run(host='192.168.1.4', port=5001, debug=True)
+    #Mod 29/09/2021
+    #app.run(host='192.168.1.4', port=5001, debug=True) # odroid C2
+    app.run(host='192.168.1.2', port=5001, debug=True) #odroid C4

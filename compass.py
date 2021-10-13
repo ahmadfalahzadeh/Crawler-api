@@ -11,8 +11,9 @@ class COMPASS:
     ## The constructor.
     def __init__(self,adress):
         try:
+            self.init_I2C()
             self.adress = adress 
-            self.bus = smbus.SMBus(2)
+            self.bus = smbus.SMBus(1)
             self.connected=True
             self.bus.read_byte_data(self.adress, 1)
         except Exception as e:
@@ -23,9 +24,8 @@ class COMPASS:
     ## Documentation for init_I2C method.
     #  @param self The object pointer.
     def init_I2C(self):
-        if os.path.exists("/dev/i2c-2") == False:
-            commande1 = "modprobe aml_i2c"
-            os.system(commande1)
+        commande1="sudo chown -R odroid:i2c /sys/bus/i2c"
+        os.system(commande1)
 
     ## Documentation for bearing255 method.
     #  @param self The object pointer.
