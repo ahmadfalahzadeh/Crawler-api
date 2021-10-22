@@ -29,6 +29,12 @@ CR = CRAWLER()
 
 
 CP = COMPASS(config.I2C_adresse)
+    
+##try:
+##    CP = COMPASS(config.I2C_adresse)
+##except Exception as e:
+##    print("Couldn't initialize compass, exception", e)
+##    exit()
 
 ## motor type objet (motor right)
 MR = MOTOR(config.motor_right_IO2,config.motor_right_DIR,0)
@@ -51,43 +57,7 @@ total_turn = 0
 def date():
 	now = datetime.datetime.now()
 	return (now.strftime("%Y/%m/%d /%H/%M/%S"))
-
-## Use lights on off in Crawler class
-def lights():
-    global orderreceiv
-    
-    print("I get flashed by the paparazzi ")
-    
-    if 'time' in request.args and'lights' in request.args and 'order' in request.args and 'nborder' in request.args:
         
-        print("there is lights in request.args")
-        
-        ordersend = request.args['order']
-        nborder = request.args['nborder']
-        time = request.args['time']
-        lights = request.args['lights']
-        
-        if str(lights)=="on":
-            print("With all the lights on")
-            lights= CR.light_on_off(1)
-            
-        elif str(lights)=="off":
-            print("So turn the lights out ")
-            lights= CR.light_on_off(0)
-        else:
-            return "error lights"
-        
-        orderreceiv = str(date())+"Crawler received :/order:"+str(nborder)+"/Time:"+str(time)+"/lights:"+str(lights)
-        ordersend = str(date())+"Crawler executed :/order:"+str(nborder)+" END"
-        return ordersend
-    else:
-        print("My eyes are still burning red , So turn the lights out")
-        lights="no lights avaible"
-        
-    return lights
-    
-
-
 
 ## Management of displacement in manual mode
 #  Processing of requests sent for manual mode.
@@ -375,7 +345,7 @@ def turn():
         elif total_turn <= -360 :
             total_turn = total_turn - CP.bearing3599()
             CR.right(50)
-        elif direction <= 180 :
+        elif int(direction) <= 180 :
             total_turn = total_turn - CP.bearing3599()
             CR.right(50)
         else :
@@ -416,6 +386,58 @@ def stopfunction() :
     compteur_test=0
     test_recaption = False
     return "Aplication Stop"
+
+## Use lights on off in Crawler class
+def lights_on():
+    global compteur_test
+    global test_recaption
+    global orderreceiv
+    orderreceiv = "Lights ON"
+    test_recaption = True
+    CR.light_on_off(1) # enable Lights use
+    compteur_test=+1
+    test_recaption = True
+    return "Lights Enable"
+
+def lights_off():
+    global compteur_test
+    global test_recaption
+    global orderreceiv
+    orderreceiv = "Lights OFF"
+    test_recaption = True
+    CR.light_on_off(0) # disable Lights use
+    compteur_test=0
+    test_recaption = True
+    return "Lights Disable"
+
+
+def motor_enable():
+    ## Allow motors to run
+    #  @return: "Motor Enable"
+    #  @type: string
+    global compteur_test
+    global test_recaption
+    global orderreceiv
+    orderreceiv = "Motors ON"
+    test_recaption = True
+    CR.on_off(1) # enable IO2 use
+    compteur_test=+1
+    test_recaption = True
+    return "Motors Enable"
+
+def motor_disable():
+    ## Forbide motors to run
+    #  @return: "Motor Disable"
+    #  @type: string
+    global compteur_test
+    global test_recaption
+    global orderreceiv
+    orderreceiv = "Motors OFF"
+    test_recaption = True
+    CR.on_off(0) # disable IO2 use
+    compteur_test=0
+    test_recaption = False
+    return "Motors Disable"
 
 ## test if a person is already connected to the web page
 #  @return: 0 if access to the web page is possible, 1 otherwise
@@ -463,13 +485,30 @@ def read_compass():
     compass = CP.bearing3599()
     return str(compass)
 
-@app.route("/api/lights")
+@app.route("/api/lights_on")
 ## if request send to /api/lights, execute light_on_off(on_off) from CRAWLER class and send in response to the request the value return by light_on_off(on_off)
-def flashing_lights():
-    print("Hey, I m flashing lights method")
-    return lights()
-    
+def flashing_lights_on():
+    print("Hey, I m lights on method")
+    return lights_on()
 
+@app.route("/api/lights_off")
+## if request send to /api/lights, execute light_on_off(on_off) from CRAWLER class and send in response to the request the value return by light_on_off(on_off)
+def flashing_lights_off():
+    print("Hey, I m lights off method")
+    return lights_off()
+
+
+@app.route("/api/IO2_on")
+##if request send to /api/IO2_on, execute motor_enable 
+def IO2_on():
+    print("*****************************IO2 ON ****************************************")
+    return motor_enable()
+
+@app.route("/api/IO2_off")
+##if request send to /api/IO2_off, execute motor_disable 
+def IO2_off():
+    print("*****************************IO2 OFF****************************************")
+    return motor_disable()
 
 @app.route("/api/manual/deplacement")
 ## if request send to /api/manual/deplacment, execute manual_deplacment() and send in response to the request the value return by manual_deplacment()
@@ -524,6 +563,7 @@ def hourCrawler():
 #  @return: value return by connection()
 #  @type: string
 def connnection():
+    print("connection avaible")
     return connec()
 
 @app.route("/api/deconnection")
@@ -531,18 +571,11 @@ def connnection():
 #  @return: value return by deconnection()
 #  @type: string
 def deconnection():
+    print ("WARNING, API DISCONNECTED")
     return deco()
 
 
 if __name__=="__main__":
-    #MODIFICAT 25/01/2020
-   # app.run(host='147.83.159.165', port=5001, debug=True)
-	#app.run(host='147.83.159.159', port=5001, debug=True) 11:49 05/02/2021
-    #MODIFICAT 23/10/2020 12:19
-    #app.run(host='147.83.159.170', port=5001, debug=True)
-	#app.run(host='147.83.159.154', port=5001, debug=True)
-    #app.run(host='192.168.2.117', port=5001, debug=True)
-    #app.run(host='127.0.0.1', port=5001, debug=True)
     #Mod 29/09/2021
     #app.run(host='192.168.1.4', port=5001, debug=True) # odroid C2
     app.run(host='192.168.1.2', port=5001, debug=True) #odroid C4

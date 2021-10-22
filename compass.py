@@ -24,7 +24,7 @@ class COMPASS:
     ## Documentation for init_I2C method.
     #  @param self The object pointer.
     def init_I2C(self):
-        commande1="sudo chown -R odroid:i2c /sys/bus/i2c"
+        commande1="sudo chown -R www-data:i2c /sys/bus/i2c"
         os.system(commande1)
 
     ## Documentation for bearing255 method.

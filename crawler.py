@@ -14,7 +14,6 @@ class CRAWLER():
         self.init_IO2_DIR()
         self.init_PWM()
         self.init_light()
-        print("YOOOOOOOOOOO!!!!!!!!!!!!!! CRAWLER IS USED!!!!!!!!!!!!")
 
     ## Documentation for init_I02_DIR method.
     #  initializes GPIOs for both motors
@@ -23,13 +22,13 @@ class CRAWLER():
         self.MR.init_GPIO(config.motor_right_IO2)
         self.ML.init_GPIO(config.motor_left_IO2)
         self.MR.init_GPIO(config.motor_right_DIR)
-        self.MR.init_GPIO(config.motor_right_DIR2)
+        #self.MR.init_GPIO(config.motor_right_DIR2) # robot test
         self.ML.init_GPIO(config.motor_left_DIR)
-        self.MR.init_GPIO(config.motor_left_DIR2)
+        #self.MR.init_GPIO(config.motor_left_DIR2) #robot test
 
     ## Documentation for init_I02_DIR method.
     #  @param self The object pointer.
-    def init_PWM(self): #ne sert a rien
+    def init_PWM(self):
         self.MR.init_PWM_2(config.motor_right_PWM)
         self.ML.init_PWM_2(config.motor_left_PWM)
 
@@ -59,9 +58,9 @@ class CRAWLER():
     #  @type duty_cycle: int
     def forward(self, duty_cycle):     
         self.MR.DIR(config.motor_right_DIR, int(0))   #0
-        self.MR.DIR(config.motor_right_DIR2, int(1))   #1 #little robot test
+        #self.MR.DIR(config.motor_right_DIR2, int(1))   #1 #little robot test
         self.ML.DIR(config.motor_left_DIR, int(1))    #1
-        self.ML.DIR(config.motor_left_DIR2, int(0))    #0 #little robot test
+        #self.ML.DIR(config.motor_left_DIR2, int(0))    #0 #little robot test
         self.MR.duty_cycle(duty_cycle, config.motor_right_PWM)
         self.ML.duty_cycle(duty_cycle, config.motor_left_PWM)
         print("[+] I should be going forward from CR.py")
@@ -74,9 +73,9 @@ class CRAWLER():
     #  @type duty_cycle: int
     def backward(self, duty_cycle):
         self.MR.DIR(config.motor_right_DIR, 1)
-        self.MR.DIR(config.motor_right_DIR2, int(0))   #1 #little robot test
+        #self.MR.DIR(config.motor_right_DIR2, int(0))   #1 #little robot test
         self.ML.DIR(config.motor_left_DIR, 0)
-        self.ML.DIR(config.motor_left_DIR2, int(1))    #0 #little robot test
+        #self.ML.DIR(config.motor_left_DIR2, int(1))    #0 #little robot test
         self.MR.duty_cycle( duty_cycle, config.motor_right_PWM)
         self.ML.duty_cycle( duty_cycle, config.motor_left_PWM)
 
@@ -87,9 +86,9 @@ class CRAWLER():
     #  @type duty_cycle: int
     def right(self, duty_cycle):
         self.MR.DIR(config.motor_right_DIR, 0)
-        self.MR.DIR(config.motor_right_DIR2, 1)#little robot test
+        #self.MR.DIR(config.motor_right_DIR2, 1)#little robot test
         self.ML.DIR(config.motor_left_DIR, 0)
-        self.ML.DIR(config.motor_left_DIR2, 1)#little robot test
+        #self.ML.DIR(config.motor_left_DIR2, 1)#little robot test
         self.MR.duty_cycle( duty_cycle, config.motor_right_PWM)
         self.ML.duty_cycle(duty_cycle, config.motor_left_PWM)
 
@@ -100,9 +99,9 @@ class CRAWLER():
     #  @type duty_cycle: int
     def left(self, duty_cycle):
         self.MR.DIR(config.motor_right_DIR, 1)
-        self.MR.DIR(config.motor_right_DIR2, 0)#little robot test
+        #self.MR.DIR(config.motor_right_DIR2, 0)#little robot test
         self.ML.DIR(config.motor_left_DIR, 1)
-        self.ML.DIR(config.motor_left_DIR2, 0)#little robot test
+        #self.ML.DIR(config.motor_left_DIR2, 0)#little robot test
         self.MR.duty_cycle( duty_cycle,config.motor_right_PWM)
         self.ML.duty_cycle(duty_cycle, config.motor_left_PWM)
 

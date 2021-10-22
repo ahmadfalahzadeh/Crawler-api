@@ -35,17 +35,15 @@ class MOTOR:
         print("-----> Init GPIO %d" % GPIO_number)
         if os.path.exists("/sys/class/gpio/gpio" + str(GPIO_number) + "/direction") == False:
             print("-----> Init GPIO %d" % GPIO_number)
-            command1 = "sudo chown -R odroid:odroid /sys/class/gpio"
+            command1 = "sudo chown -R www-data:www-data /sys/class/gpio"
             command2 = "echo "  + str(GPIO_number)  +" > /sys/class/gpio/export"
-            command3 = "sudo chown -R odroid:odroid /sys/class/gpio/gpio"+str(GPIO_number)+"/*"
+            command3 = "sudo chown -R www-data:www-data /sys/class/gpio/gpio"+str(GPIO_number)+"/*"
             command4 = "echo out > /sys/class/gpio/gpio" + str(GPIO_number) + "/direction"
             print("-----> Direction GPIO %d" % GPIO_number)
-            #command5 = "chown www-data:www-data /sys/class/gpio/gpio%d/value" % GPIO_number #Enoc added this
             os.system(command1)
             os.system(command2)
             os.system(command3)
             os.system(command4) 
-            #os.system(command5)
 	
 
 ################################################# INIT METHOD PWM ##################################################################             
@@ -58,9 +56,9 @@ class MOTOR:
         print("-----> Init PWM ")
         #ODROID C4
         if os.path.exists("/sys/class/pwm/pwmchip4/pwm"+str(PWM_number)+"/period")==False:
-            command1 = "sudo chown -R odroid:odroid /sys/class/pwm"
+            command1 = "sudo chown -R www-data:www-data /sys/class/pwm"
             command2= "sudo echo "+str(PWM_number)+" > /sys/class/pwm/pwmchip4/export" #pin 12 motor Right, pin 15 motor Left
-            command3 = "sudo chown -R odroid:odroid /sys/class/pwm/pwmchip4/*"
+            command3 = "sudo chown -R www-data:www-data /sys/class/pwm/pwmchip4/*"
             command4= "sudo echo 20000000 > /sys/class/pwm/pwmchip4/pwm"+str(PWM_number)+"/period" # 20kHz frequency 
         
             os.system(command1)
@@ -77,9 +75,6 @@ class MOTOR:
     #  @param on_off: 1 for enable, 0 for disable
     #  @type on_off: int
     def enable_PWM(self,on_off,PWM_number):
-        #ODROID C2
-        #command4 = "echo "+str(on_off)+" > /sys/devices/platform/pwm-ctrl/enable"+str(R_L)
-        #os.system(command4)
         print("PWM ENABLE %d" %on_off)
         command1= "sudo echo "+str(on_off)+" > /sys/class/pwm/pwmchip4/pwm"+str(PWM_number)+"/enable"
         os.system(command1)
@@ -95,7 +90,6 @@ class MOTOR:
     #  @type direction: int
     def DIR(self,GPIO_number, direction):
         command1 = "echo "+ str(direction)+ " >/sys/class/gpio/gpio"+str(GPIO_number)+"/value"
-        #command1 = "echo "+ str(direction)+ " >/sys/class/gpio/gpio"+str(GPIO_number)+"/direction"
         print("-----> GPIO %d" % GPIO_number,"-->Direction %d" %direction)
         os.system(command1)
         
@@ -139,4 +133,3 @@ class MOTOR:
             print("I ENABLE PWM R BECAUSE DUTY/=0")
          
         os.system(command1)
-        
