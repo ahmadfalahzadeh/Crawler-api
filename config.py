@@ -1,4 +1,7 @@
+##This is config file
 ## PWM number for the right motor
+
+#hgsukydguyfgvbuertvgvufgjhdchgjawhbfjhfhgsdkygvjsgdck
 motor_right_PWM = 0 #pin 12
 
 ## GPIO number determining the direction of rotation for the right motor
@@ -8,7 +11,7 @@ motor_right_DIR = 476 #pin 16 odroid c4
 
 ## GPIO number determining whether the motor is enabled or not
 #  connect to the IO2 pin of the microcontroller right
-motor_right_IO2 = 479 #pin 11 odroid c4
+motor_right_IO2 = 433 #pin 26 odroid c4
 
 
 ## PWM number for the left motor
@@ -26,7 +29,7 @@ motor_left_IO2 = 478 #pin 22 odroid c4
 
 
 ## number of the first GPIO for light
-light1 = 490 #pin 29 odroid c4 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! NOT USED IN THE HARDWARE (only 2 lights) but activated
+light1 = 490 #pin 29 odroid c4 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! NOT USED IN THE HARDWARE (only 2 lights)
 ## number of the second GPIO for light
 light2 = 491 #pin 31 odroid c4
 ## number of the third GPIO for light

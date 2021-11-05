@@ -50,20 +50,21 @@ class MOTOR:
 
     ## Documentation for init_PWM_2 method.
     #  initializes the two PWMs
-    #  warning: with odroid-C2 impossible to initialize a PWM then the second. Both are therefore initialized simultaneously
+    #  warning: with www-data-C2 impossible to initialize a PWM then the second. Both are therefore initialized simultaneously
     #  @param self The object pointer.
     def init_PWM_2(self,PWM_number):
         print("-----> Init PWM ")
-        #ODROID C4
-        if os.path.exists("/sys/class/pwm/pwmchip4/pwm"+str(PWM_number)+"/period")==False:
-            command1 = "sudo chown -R www-data:www-data /sys/class/pwm"
-            command2= "sudo echo "+str(PWM_number)+" > /sys/class/pwm/pwmchip4/export" #pin 12 motor Right, pin 15 motor Left
-            command3 = "sudo chown -R www-data:www-data /sys/class/pwm/pwmchip4/*"
-            command4= "sudo echo 20000000 > /sys/class/pwm/pwmchip4/pwm"+str(PWM_number)+"/period" # 20kHz frequency 
+        #www-data C4
+        if os.path.exists("/sys/class/pwm/pwmchip0/pwm"+str(PWM_number)+"/period")==False:
+            command1 = "sudo chown -R www-data:www-data /sys/class/pwm/pwmchip0/"
+            command2= "sudo echo "+str(PWM_number)+" > /sys/class/pwm/pwmchip0/export" #pin 12 motor Right, pin 15 motor Left
+            command3 = "sudo chown -R www-data:www-data /sys/class/pwm/pwmchip0/*"
+            command4= "sudo echo 100000 > /sys/class/pwm/pwmchip0/pwm"+str(PWM_number)+"/period" # 10 kHz
         
             os.system(command1)
             os.system(command2)
             print("PWM EXPORTED")
+            print("pwm ready: %d" % PWM_number)
             os.system(command3)
             os.system(command4)
             print("PWM PERIOD SET")
@@ -76,7 +77,8 @@ class MOTOR:
     #  @type on_off: int
     def enable_PWM(self,on_off,PWM_number):
         print("PWM ENABLE %d" %on_off)
-        command1= "sudo echo "+str(on_off)+" > /sys/class/pwm/pwmchip4/pwm"+str(PWM_number)+"/enable"
+        print("PWM ENABLE %d" %PWM_number)
+        command1= "sudo echo "+str(on_off)+" > /sys/class/pwm/pwmchip0/pwm"+str(PWM_number)+"/enable"
         os.system(command1)
         
 ################################################# DIR METHOD GPIO ##################################################################        
@@ -107,6 +109,19 @@ class MOTOR:
         command1 = "echo "+ str(motor_on_off) + " >/sys/class/gpio/gpio"+str(GPIO_number)+"/value"
         print("-----> GPIO %d" % GPIO_number, "-->Value %d" %motor_on_off)
         os.system(command1)
+
+
+     ## Documentation for read_GPIO.
+    #  read GPIO and return the value
+    #  @param self The object pointer.
+    def read_GPIO(self, GPIO_number):
+        print ("----------------> Read GPIO <------------------")
+        command1 = "cat /sys/class/gpio/gpio" + str(GPIO_number) + "/value"
+        os.system(command1)
+        read = int(os.popen(command1).read())
+        print("GPIO NUMBER: %d" %GPIO_number)
+        print ("GPIO READ VALUE :  %d" % read)
+        return read
         
         
         
@@ -121,15 +136,15 @@ class MOTOR:
     #◘ @18000000 is the max period of PWM
   
     def duty_cycle(self, duty_cycle,PWM_number):
-        command1= "echo "+str(int((float(duty_cycle)/100)*18000000))+" > /sys/class/pwm/pwmchip4/pwm"+str(PWM_number)+"/duty_cycle" #duty in % converted in ns
+        command1= "echo "+str(int((float(duty_cycle)/100)*80000))+" > /sys/class/pwm/pwmchip0/pwm"+str(PWM_number)+"/duty_cycle" #duty in % converted in ns
         
         if int(duty_cycle) == 0 :
-            disable_PWM= "echo 0 > /sys/class/pwm/pwmchip4/pwm"+str(PWM_number)+"/enable"
+            disable_PWM= "echo 0 > /sys/class/pwm/pwmchip0/pwm"+str(PWM_number)+"/enable"
             os.system(disable_PWM)
             print("I DISABLE PWM R BECAUSE DUTY=0")
         else :
-            enable_PWM= "echo 1 > /sys/class/pwm/pwmchip4/pwm"+str(PWM_number)+"/enable"
+            enable_PWM= "echo 1 > /sys/class/pwm/pwmchip0/pwm"+str(PWM_number)+"/enable"
             os.system(enable_PWM)
-            print("I ENABLE PWM R BECAUSE DUTY/=0")
+            print("I ENABLE PWM L BECAUSE DUTY/=0")
          
         os.system(command1)

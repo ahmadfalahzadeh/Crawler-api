@@ -186,18 +186,30 @@ def automatic_deplacement():
             speed2 = request.args['speed2'+str(i)]
             
             
-            if int(speed1) < 0:
-                MR.DIR(config.motor_right_DIR,0)
-                MR.duty_cycle(int(speed1),0 )
+            if int(speed1)>= 0 and int(speed2)>= 0:
+                MR.DIR(config.motor_right_DIR, int(1))
+                ML.DIR(config.motor_left_DIR, int(0)) 
+                MR.duty_cycle(int(speed1),config.motor_right_PWM)
+                ML.duty_cycle(int(speed2),config.motor_left_PWM)
+            elif int(speed1)<= 0 and int(speed2)<= 0:
+                MR.DIR(config.motor_right_DIR, int(0))
+                ML.DIR(config.motor_left_DIR, int(1)) 
+                MR.duty_cycle(-int(speed1),config.motor_right_PWM)
+                ML.duty_cycle(-int(speed2),config.motor_left_PWM)
+            elif int(speed1)>= 0 and int(speed2)<= 0:
+                MR.DIR(config.motor_right_DIR, int(1))
+                ML.DIR(config.motor_left_DIR, int(1)) 
+                MR.duty_cycle(int(speed1),config.motor_right_PWM)
+                ML.duty_cycle(-int(speed2),config.motor_left_PWM)
+            elif int(speed1)<= 0 and int(speed2)>= 0:
+                MR.DIR(config.motor_right_DIR, int(0))
+                ML.DIR(config.motor_left_DIR, int(0)) 
+                MR.duty_cycle(-int(speed1),config.motor_right_PWM)
+                ML.duty_cycle(int(speed2),config.motor_left_PWM)
             else :
-                MR.DIR(config.motor_right_DIR,1)
-                MR.duty_cycle(int(speed1),0)
-            if int(speed2) < 0:
-                ML.DIR(config.motor_left_DIR,0)
-                ML.duty_cycle(int(speed2),1)
-            else :
-                ML.DIR(config.motor_left_DIR,1)
-                ML.duty_cycle(int(speed2),1)  
+                CR.forward(0)
+                print("Speed 1 or 2 < 0")
+
             value=compteur_test
             trun_degree =CP.bearing3599()
             compteur =0
@@ -257,18 +269,29 @@ def advanced_deplacement():
         CR.PWM(int(1))
 
         #traitement de la direction
-        if int(speed1) < 0:
-            MR.DIR(config.motor_right_DIR,0)
-            MR.duty_cycle(int(speed1),0)
+        if int(speed1)>= 0 and int(speed2)>= 0:
+            MR.DIR(config.motor_right_DIR, int(1))
+            ML.DIR(config.motor_left_DIR, int(0)) 
+            MR.duty_cycle(int(speed1),config.motor_right_PWM)
+            ML.duty_cycle(int(speed2),config.motor_left_PWM)
+        elif int(speed1)<= 0 and int(speed2)<= 0:
+            MR.DIR(config.motor_right_DIR, int(0))
+            ML.DIR(config.motor_left_DIR, int(1)) 
+            MR.duty_cycle(-int(speed1),config.motor_right_PWM)
+            ML.duty_cycle(-int(speed2),config.motor_left_PWM)
+        elif int(speed1)>= 0 and int(speed2)<= 0:
+            MR.DIR(config.motor_right_DIR, int(1))
+            ML.DIR(config.motor_left_DIR, int(1)) 
+            MR.duty_cycle(int(speed1),config.motor_right_PWM)
+            ML.duty_cycle(-int(speed2),config.motor_left_PWM)
+        elif int(speed1)<= 0 and int(speed2)>= 0:
+            MR.DIR(config.motor_right_DIR, int(0))
+            ML.DIR(config.motor_left_DIR, int(0)) 
+            MR.duty_cycle(-int(speed1),config.motor_right_PWM)
+            ML.duty_cycle(int(speed2),config.motor_left_PWM)
         else :
-            MR.DIR(config.motor_right_DIR,1)
-            MR.duty_cycle(int(speed1),0)
-        if int(speed2) < 0:
-            ML.DIR(config.motor_left_DIR,0)
-            ML.duty_cycle(int(speed2),1)
-        else :
-            ML.DIR(config.motor_left_DIR,1)
-            ML.duty_cycle(int(speed2),1) 
+            CR.forward(0)
+            print("Speed 1 or 2 < 0") 
 
         #write in the file that the request has been received
         orderreceiv = str(date())+"Crawler send :/order:"+str(nborder)+"/Time:"+str(time)+"/Motor right:"+str(speed1)+"/Motor left:"+str(speed2)
@@ -407,7 +430,7 @@ def lights_off():
     test_recaption = True
     CR.light_on_off(0) # disable Lights use
     compteur_test=0
-    test_recaption = True
+    test_recaption = False
     return "Lights Disable"
 
 
@@ -451,6 +474,7 @@ def connec():
         return str(0)
     else :
         return str(1)
+    print("accessWebPage %d" %accessWebPage)
 	
 ## free access to the web page
 #  @return: 1
@@ -459,6 +483,7 @@ def deco():
     global accessWebPage
     accessWebPage = False
     return str(1)
+    print("accessWebPage %d" %accessWebPage)
 
 
 
@@ -485,6 +510,22 @@ def read_compass():
     compass = CP.bearing3599()
     return str(compass)
 
+@app.route("/api/read_IO2")
+## if request send to /api/read_IO2, read_IO2 from CRAWLER class and send in response to the request the value return by read_IO2()
+#  @return: value return by read_IO2()
+#  @type: string
+def read_IO2():
+    motors=CR.read_IO2()
+    return str(motors)
+
+@app.route("/api/read_lights")
+## if request send to /api/read_IO2, read_IO2 from CRAWLER class and send in response to the request the value return by read_IO2()
+#  @return: value return by read_IO2()
+#  @type: string
+def read_lights():
+    lights=CR.readLights()
+    return str(lights)
+
 @app.route("/api/lights_on")
 ## if request send to /api/lights, execute light_on_off(on_off) from CRAWLER class and send in response to the request the value return by light_on_off(on_off)
 def flashing_lights_on():
@@ -498,13 +539,13 @@ def flashing_lights_off():
     return lights_off()
 
 
-@app.route("/api/IO2_on")
+@app.route("/api/IO2_on", methods=['GET', 'POST'])
 ##if request send to /api/IO2_on, execute motor_enable 
 def IO2_on():
     print("*****************************IO2 ON ****************************************")
     return motor_enable()
 
-@app.route("/api/IO2_off")
+@app.route("/api/IO2_off", methods=['GET', 'POST'])
 ##if request send to /api/IO2_off, execute motor_disable 
 def IO2_off():
     print("*****************************IO2 OFF****************************************")

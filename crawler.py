@@ -32,6 +32,17 @@ class CRAWLER():
         self.MR.init_PWM_2(config.motor_right_PWM)
         self.ML.init_PWM_2(config.motor_left_PWM)
 
+
+    def read_IO2(self):
+        mr = self.MR.read_GPIO(config.motor_right_IO2);
+        ml = self.ML.read_GPIO(config.motor_left_IO2);
+        return mr , ml
+
+    def readLights(self):
+        l1 = self.MR.read_GPIO(config.light2);
+        l2 = self.ML.read_GPIO(config.light3);
+        return l1 , l2
+
     ## Documentation for PWM method.
     #  enables or disables PWMs
     #  @param self The object pointer.
@@ -57,9 +68,9 @@ class CRAWLER():
     #  @param duty_cycle: percentage value of the robot speed (0 to 100)
     #  @type duty_cycle: int
     def forward(self, duty_cycle):     
-        self.MR.DIR(config.motor_right_DIR, int(0))   #0
+        self.MR.DIR(config.motor_right_DIR, int(1))   #0
         #self.MR.DIR(config.motor_right_DIR2, int(1))   #1 #little robot test
-        self.ML.DIR(config.motor_left_DIR, int(1))    #1
+        self.ML.DIR(config.motor_left_DIR, int(0))    #1
         #self.ML.DIR(config.motor_left_DIR2, int(0))    #0 #little robot test
         self.MR.duty_cycle(duty_cycle, config.motor_right_PWM)
         self.ML.duty_cycle(duty_cycle, config.motor_left_PWM)
@@ -72,9 +83,9 @@ class CRAWLER():
     #  @param duty_cycle: percentage value of the robot speed (0 to 100)
     #  @type duty_cycle: int
     def backward(self, duty_cycle):
-        self.MR.DIR(config.motor_right_DIR, 1)
+        self.MR.DIR(config.motor_right_DIR, 0)
         #self.MR.DIR(config.motor_right_DIR2, int(0))   #1 #little robot test
-        self.ML.DIR(config.motor_left_DIR, 0)
+        self.ML.DIR(config.motor_left_DIR, 1)
         #self.ML.DIR(config.motor_left_DIR2, int(1))    #0 #little robot test
         self.MR.duty_cycle( duty_cycle, config.motor_right_PWM)
         self.ML.duty_cycle( duty_cycle, config.motor_left_PWM)
@@ -120,8 +131,8 @@ class CRAWLER():
     #  @param on_off: 1 to activate light, 0 to deactivate light
     #  @type on_off: int
     def light_on_off(self, on_off):
-        command1 = "echo "+ str(on_off) + " >/sys/class/gpio/gpio"+str(config.light1)+"/value"
-        os.system(command1)
+        #command1 = "echo "+ str(on_off) + " >/sys/class/gpio/gpio"+str(config.light1)+"/value"
+        #os.system(command1)
         command2 = "echo "+ str(on_off) + " >/sys/class/gpio/gpio"+str(config.light2)+"/value"
         os.system(command2)
         command3 = "echo "+ str(on_off) + " >/sys/class/gpio/gpio"+str(config.light3)+"/value"

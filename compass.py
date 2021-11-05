@@ -13,7 +13,7 @@ class COMPASS:
         try:
             self.init_I2C()
             self.adress = adress 
-            self.bus = smbus.SMBus(1)
+            self.bus = smbus.SMBus(0) # SDA pin 3 and SCL pin 5 
             self.connected=True
             self.bus.read_byte_data(self.adress, 1)
         except Exception as e:
