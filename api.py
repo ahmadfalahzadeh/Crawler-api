@@ -13,6 +13,7 @@ from flask_cors import CORS
 from crawler import CRAWLER #made by girls
 from compass import COMPASS #made by girls
 from motor import MOTOR #made by girls
+from corrector import CORRECTOR
 
 
 #API creation
@@ -26,7 +27,7 @@ cors = CORS(app)
 ## crawler type object
 CR = CRAWLER()
 ## compass type object
-
+COR = CORRECTOR()
 
 CP = COMPASS(config.I2C_adresse)
     
@@ -190,7 +191,7 @@ def automatic_deplacement():
                 MR.DIR(config.motor_right_DIR, int(1))
                 ML.DIR(config.motor_left_DIR, int(0)) 
                 MR.duty_cycle(int(speed1),config.motor_right_PWM)
-                ML.duty_cycle(int(speed2),config.motor_left_PWM)
+                ML.duty_cycle(int(COR.corrector1(int(speed2))),config.motor_left_PWM)
             elif int(speed1)<= 0 and int(speed2)<= 0:
                 MR.DIR(config.motor_right_DIR, int(0))
                 ML.DIR(config.motor_left_DIR, int(1)) 
@@ -206,10 +207,13 @@ def automatic_deplacement():
                 ML.DIR(config.motor_left_DIR, int(0)) 
                 MR.duty_cycle(-int(speed1),config.motor_right_PWM)
                 ML.duty_cycle(int(speed2),config.motor_left_PWM)
+                
             else :
                 CR.forward(0)
                 print("Speed 1 or 2 < 0")
-
+            
+            print("-----------------------------COR.corrector1(speed2)--------------------------------------")
+            print( COR.corrector1(int(speed2)))
             value=compteur_test
             trun_degree =CP.bearing3599()
             compteur =0
@@ -273,7 +277,7 @@ def advanced_deplacement():
             MR.DIR(config.motor_right_DIR, int(1))
             ML.DIR(config.motor_left_DIR, int(0)) 
             MR.duty_cycle(int(speed1),config.motor_right_PWM)
-            ML.duty_cycle(int(speed2),config.motor_left_PWM)
+            ML.duty_cycle(int(COR.corrector1(int(speed2))),config.motor_left_PWM)
         elif int(speed1)<= 0 and int(speed2)<= 0:
             MR.DIR(config.motor_right_DIR, int(0))
             ML.DIR(config.motor_left_DIR, int(1)) 
@@ -289,6 +293,7 @@ def advanced_deplacement():
             ML.DIR(config.motor_left_DIR, int(0)) 
             MR.duty_cycle(-int(speed1),config.motor_right_PWM)
             ML.duty_cycle(int(speed2),config.motor_left_PWM)
+                
         else :
             CR.forward(0)
             print("Speed 1 or 2 < 0") 

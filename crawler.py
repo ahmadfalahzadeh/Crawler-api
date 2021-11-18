@@ -2,6 +2,7 @@ import os
 import sys
 import config
 from motor import MOTOR
+from corrector import CORRECTOR
 
 ## Documentation for CRAWLER class.
 #
@@ -11,6 +12,7 @@ class CRAWLER():
     def __init__(self):
         self.MR = MOTOR(config.motor_right_IO2,config.motor_right_DIR,0)
         self.ML = MOTOR(config.motor_left_IO2,config.motor_left_DIR,1)
+        self.COR = CORRECTOR()
         self.init_IO2_DIR()
         self.init_PWM()
         self.init_light()
@@ -73,7 +75,7 @@ class CRAWLER():
         self.ML.DIR(config.motor_left_DIR, int(0))    #1
         #self.ML.DIR(config.motor_left_DIR2, int(0))    #0 #little robot test
         self.MR.duty_cycle(duty_cycle, config.motor_right_PWM)
-        self.ML.duty_cycle(duty_cycle, config.motor_left_PWM)
+        self.ML.duty_cycle(int(self.COR.corrector1(duty_cycle)), config.motor_left_PWM)
         print("[+] I should be going forward from CR.py")
 
     ## Documentation for backward method.
@@ -88,8 +90,8 @@ class CRAWLER():
         self.ML.DIR(config.motor_left_DIR, 1)
         #self.ML.DIR(config.motor_left_DIR2, int(1))    #0 #little robot test
         self.MR.duty_cycle( duty_cycle, config.motor_right_PWM)
-        self.ML.duty_cycle( duty_cycle, config.motor_left_PWM)
-
+        self.ML.duty_cycle(int(self.COR.corrector2(duty_cycle)), config.motor_left_PWM)
+        print("I should be going BACKWARD from CR.py")
     ## Documentation for right method.
     #  rotates the robot on itself to the right (clockwise) at variable speed
     #  @param self The object pointer.
