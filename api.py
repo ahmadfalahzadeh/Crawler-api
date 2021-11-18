@@ -196,7 +196,7 @@ def automatic_deplacement():
                 MR.DIR(config.motor_right_DIR, int(0))
                 ML.DIR(config.motor_left_DIR, int(1)) 
                 MR.duty_cycle(-int(speed1),config.motor_right_PWM)
-                ML.duty_cycle(-int(speed2),config.motor_left_PWM)
+                ML.duty_cycle(int(COR.corrector1(-int(speed2))),config.motor_left_PWM)
             elif int(speed1)>= 0 and int(speed2)<= 0:
                 MR.DIR(config.motor_right_DIR, int(1))
                 ML.DIR(config.motor_left_DIR, int(1)) 
@@ -282,7 +282,7 @@ def advanced_deplacement():
             MR.DIR(config.motor_right_DIR, int(0))
             ML.DIR(config.motor_left_DIR, int(1)) 
             MR.duty_cycle(-int(speed1),config.motor_right_PWM)
-            ML.duty_cycle(-int(speed2),config.motor_left_PWM)
+            ML.duty_cycle(int(COR.corrector1(-int(speed2))),config.motor_left_PWM)
         elif int(speed1)>= 0 and int(speed2)<= 0:
             MR.DIR(config.motor_right_DIR, int(1))
             ML.DIR(config.motor_left_DIR, int(1)) 
