@@ -8,14 +8,14 @@ class CORRECTOR:
         
 
     #Use of equation determinated by Marc and Dan: pwm2= 3.17 + 0.844pwm1 + 0.0262pwm1^2 + -2.95E-04pwm1^3 --> y = -0,0003x3 + 0,0262x2 + 0,8437x + 3,1708
-    def corrector1(self, speed1):
+    def corrector1(self, speed1):#forward
         if speed1==0:
             speed2 = 0
         else :
             speed2 = - 0.000295*pow(int(speed1),3) + 0.0262*pow(int(speed1),2) + 0.844*int(speed1) + 3.17
         return speed2
     
-    def corrector2(self, speed1):
+    def corrector2(self, speed1):#backwars
         if speed1==0:
             speed2 = 0
         else :
