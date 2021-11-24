@@ -38,9 +38,9 @@ CP = COMPASS(config.I2C_adresse)
 ##    exit()
 
 ## motor type objet (motor right)
-MR = MOTOR(config.motor_right_IO2,config.motor_right_DIR,0)
+MR = MOTOR(config.motor_right_IO2,config.motor_right_DIR,config.motor_right_PWM)
 ## motor type objet (motor left)
-ML =MOTOR(config.motor_left_IO2,config.motor_left_DIR,1)
+ML =MOTOR(config.motor_left_IO2,config.motor_left_DIR,config.motor_left_PWM)
 
 #initialization of global variables
 compteur_test=0
@@ -366,23 +366,50 @@ def turn():
         #write in the file that the request has been received
         orderreceiv = str(date())+" Crawler send/order:"+str(nborder)+"/rotation:"+direction
         test_recaption = True
+
+        currentPosition = CP.bearing3599()
+        total_turn = int(currentPosition) - int(direction)
+
+        #while int(currentPosition) != int(direction):
+        #    total_turn = int(currentPosition) - int(direction)
+         #   if total_turn <= 180 and total_turn >= -180 and total_turn != 0:
+          #      CR.right(35)
+           #     print("turn right")
+            #elif total_turn > 180 or total_turn < -180 or total_turn != 0:
+             #   CR.left(35)
+              #  print("turn left")
+            #else:
+             #   CR.forward(0)
+              #  print("STOP")
+            #print("total turn %d" %total_turn)
+
+            #print ("turn function %d" %currentPosition)
+        #elif str(currentPosition) == str(direction):
+        #    CR.forward(0)
+         #   print("angle targetted")
+
+
         #boucle d'execution de la fonction demander
-        if total_turn >= 360 :
-            total_turn = total_turn + CP.bearing3599()
-            CR.left(50)
-        elif total_turn <= -360 :
-            total_turn = total_turn - CP.bearing3599()
-            CR.right(50)
-        elif int(direction) <= 180 :
-            total_turn = total_turn - CP.bearing3599()
-            CR.right(50)
-        else :
-            total_turn = total_turn + CP.bearing3599()
-            CR.left(50)
-        while (int(direction) <= int(CP.bearing3599()) +config.compass_accuracy) and (int(direction) >= int(CP.bearing3599()) - config.compass_accuracy):
-            sleep(0.5)
+        #if total_turn >= 360 :
+         #   total_turn = total_turn + CP.bearing3599()
+          #  CR.left(50)
+           # print("total_turn >= 360")
+        #elif total_turn <= -360 :
+         #   total_turn = total_turn - CP.bearing3599()
+         #   CR.right(50)
+         #   print("total_turn <= -360")
+        #elif int(direction) <= 180 :
+        #    total_turn = total_turn - CP.bearing3599()
+        #    CR.right(50)
+        #    print("elif int(direction) <= 180")
+        #else :
+        #    total_turn = total_turn + CP.bearing3599()
+        #    CR.left(50)
+        #    print("ELSE TURN")
+        #while (int(direction) <= int(CP.bearing3599()) +config.compass_accuracy) and (int(direction) >= int(CP.bearing3599()) - config.compass_accuracy):
+        #    sleep(0.5)
         #arret du robot quand l'action à été faite
-        CR.right(0)
+        #CR.right(0)
         #write in the file that the order has been executed
         orderend = str(date())+" Crawler send /order:"+str(nborder)+" END"
         return orderend

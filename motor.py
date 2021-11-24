@@ -142,9 +142,11 @@ class MOTOR:
             disable_PWM= "echo 0 > /sys/class/pwm/pwmchip0/pwm"+str(PWM_number)+"/enable"
             os.system(disable_PWM)
             print("I DISABLE PWM R BECAUSE DUTY=0")
+            print("duty cycle %d" %duty_cycle)
         else :
             enable_PWM= "echo 1 > /sys/class/pwm/pwmchip0/pwm"+str(PWM_number)+"/enable"
             os.system(enable_PWM)
             print("I ENABLE PWM L BECAUSE DUTY/=0")
+            print("duty cycle %d" %duty_cycle)
          
         os.system(command1)
