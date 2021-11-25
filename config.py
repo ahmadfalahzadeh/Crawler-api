@@ -39,4 +39,4 @@ light3 = 434 #pin 32 odroid c4
 I2C_adresse = 0x60
 
 # compass accuracy
-compass_accuracy = 5
+compass_accuracy = 3

@@ -367,50 +367,28 @@ def turn():
         orderreceiv = str(date())+" Crawler send/order:"+str(nborder)+"/rotation:"+direction
         test_recaption = True
 
+        #while loop initialization
         currentPosition = CP.bearing3599()
-        total_turn = int(currentPosition) - int(direction)
+        interval1 = float(direction) - float(config.compass_accuracy)
+        interval2 = float(direction) + float(config.compass_accuracy)
 
-        #while int(currentPosition) != int(direction):
-        #    total_turn = int(currentPosition) - int(direction)
-         #   if total_turn <= 180 and total_turn >= -180 and total_turn != 0:
-          #      CR.right(35)
-           #     print("turn right")
-            #elif total_turn > 180 or total_turn < -180 or total_turn != 0:
-             #   CR.left(35)
-              #  print("turn left")
-            #else:
-             #   CR.forward(0)
-              #  print("STOP")
-            #print("total turn %d" %total_turn)
-
-            #print ("turn function %d" %currentPosition)
-        #elif str(currentPosition) == str(direction):
-        #    CR.forward(0)
-         #   print("angle targetted")
-
-
-        #boucle d'execution de la fonction demander
-        #if total_turn >= 360 :
-         #   total_turn = total_turn + CP.bearing3599()
-          #  CR.left(50)
-           # print("total_turn >= 360")
-        #elif total_turn <= -360 :
-         #   total_turn = total_turn - CP.bearing3599()
-         #   CR.right(50)
-         #   print("total_turn <= -360")
-        #elif int(direction) <= 180 :
-        #    total_turn = total_turn - CP.bearing3599()
-        #    CR.right(50)
-        #    print("elif int(direction) <= 180")
-        #else :
-        #    total_turn = total_turn + CP.bearing3599()
-        #    CR.left(50)
-        #    print("ELSE TURN")
-        #while (int(direction) <= int(CP.bearing3599()) +config.compass_accuracy) and (int(direction) >= int(CP.bearing3599()) - config.compass_accuracy):
-        #    sleep(0.5)
-        #arret du robot quand l'action à été faite
-        #CR.right(0)
-        #write in the file that the order has been executed
+        receptionOrder = test_recaption
+        currentOrder = ordersend
+        
+        #while to compute Crawler current position and compare it to the desired direction
+        while (float(currentPosition) < float(interval1)) or (float(currentPosition) > float(interval2)) and receptionOrder==True and currentOrder == ordersend:
+            total_turn = float(direction) - float(currentPosition)
+            if (total_turn <= 180.0 and total_turn >= 0.0) or (total_turn <= -180.0 and total_turn >= -360.0) :
+                CR.right(20)
+            else:
+                CR.left(20)
+            currentPosition = CP.bearing3599()
+            receptionOrder = test_recaption
+            currentOrder = str(ordersend)
+            sleep(0.005)
+        #stop Crawler
+        CR.forward(0)
+        test_recaption = False
         orderend = str(date())+" Crawler send /order:"+str(nborder)+" END"
         return orderend
     else:
