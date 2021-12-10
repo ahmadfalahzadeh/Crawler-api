@@ -373,10 +373,9 @@ def turn():
         interval2 = float(direction) + float(config.compass_accuracy)
 
         receptionOrder = test_recaption
-        currentOrder = ordersend
         
         #while to compute Crawler current position and compare it to the desired direction
-        while (float(currentPosition) < float(interval1)) or (float(currentPosition) > float(interval2)) and receptionOrder==True and currentOrder == ordersend:
+        while (float(currentPosition) < float(interval1)) or (float(currentPosition) > float(interval2)) and receptionOrder==True:
             total_turn = float(direction) - float(currentPosition)
             if (total_turn <= 180.0 and total_turn >= 0.0) or (total_turn <= -180.0 and total_turn >= -360.0) :
                 CR.right(20)
@@ -384,7 +383,7 @@ def turn():
                 CR.left(20)
             currentPosition = CP.bearing3599()
             receptionOrder = test_recaption
-            currentOrder = str(ordersend)
+            print("test recaption: %r", %receptionOrder)
             sleep(0.005)
         #stop Crawler
         CR.forward(0)
@@ -425,23 +424,23 @@ def lights_on():
     global compteur_test
     global test_recaption
     global orderreceiv
-    orderreceiv = "Lights ON"
+    orderreceiv = "Lights OFF"
     test_recaption = True
     CR.light_on_off(1) # enable Lights use
     compteur_test=+1
     test_recaption = True
-    return "Lights Enable"
+    return "Lights Disable"
 
 def lights_off():
     global compteur_test
     global test_recaption
     global orderreceiv
-    orderreceiv = "Lights OFF"
+    orderreceiv = "Lights ON"
     test_recaption = True
     CR.light_on_off(0) # disable Lights use
     compteur_test=0
     test_recaption = False
-    return "Lights Disable"
+    return "Lights Enable"
 
 
 def motor_enable():
