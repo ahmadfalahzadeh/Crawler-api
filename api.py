@@ -383,7 +383,6 @@ def turn():
                 CR.left(20)
             currentPosition = CP.bearing3599()
             receptionOrder = test_recaption
-            print("test recaption: %r", %receptionOrder)
             sleep(0.005)
         #stop Crawler
         CR.forward(0)
